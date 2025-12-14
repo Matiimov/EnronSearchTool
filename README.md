@@ -10,7 +10,7 @@ Search the Enron CSV with SQLite full text search and a Streamlit UI.
 
 ## Files
 
-- `scripts/inspect_csv.py` – quick peek at the first few rows so we see the raw message format (RFC-822 headers + body).
+- `scripts/inspect_csv.py` – Inspect first few rows to see the raw message format (RFC-822 headers + body).
 - `scripts/build_index.py` – streams the CSV, parses each email, and stores fields + cleaned body text into SQLite and an FTS5 table.
 - `search/repository.py` – Wraps SQLite queries, builds boolean search strings, does basic fuzzy matching.
 - `streamlit_app.py` – Streamlit page with one text box and expandable result cards.
@@ -35,9 +35,9 @@ Search the Enron CSV with SQLite full text search and a Streamlit UI.
 
 ## Design choices & trade-offs
 
-- **Storage/indexing:** SQLite + FTS5 keeps everything in one file, no extra services. FTS5 gives us ranking, snippet support, and fast keyword search.
-- **Memory handling:** CSV ingestion is streamed row by row with commits every 1000 inserts. Oversized rows (>1 MB) are skipped so we stay under tight memory budgets; we can raise the cap later.
-- **Text parsing:** Python’s `email` module handles multipart/HTML emails so we only store the readable text and ignore attachments.
+- **Storage/indexing:** SQLite + FTS5 keeps everything in one file, no extra services. FTS5 gives ranking, and fast keyword search.
+- **Memory handling:** CSV ingestion is streamed row by row with commits every 1000 inserts. Oversized rows (>1 MB) are skipped to stay under tight memory budgets; we can raise the cap later.
+- **Text parsing:** Python’s `email` module handles multipart/HTML emails so only storing the readable text and ignore attachments.
 - **Query logic:** The repository turns user text into AND/OR FTS queries, adds fuzzy spellings via a vocabulary built at startup, and appends `*` so partial words match.
 - **UI:** Streamlit gives the single-textbox search. Each result shows subject, sender, and the full body (trimmed).
 
